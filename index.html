@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Philippines 2025 - Votre Aventure</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding-bottom: 2rem;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #0984e3, #00b894);
+            color: white;
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        header p {
+            opacity: 0.95;
+            font-size: 1rem;
+        }
+        
+        .tabs {
+            display: flex;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            overflow-x: auto;
+        }
+        
+        .tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 1rem;
+            text-align: center;
+            background: white;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #2c3e50;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        .tab:hover {
+            background: #f8f9fa;
+        }
+        
+        .tab.active {
+            border-bottom-color: #0984e3;
+            color: #0984e3;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 2rem 1.5rem;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        h2 {
+            color: #0984e3;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0984e3;
+        }
+        
+        h3 {
+            color: #00b894;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+        }
+        
+        #map {
+            height: 450px;
+            width: 100%;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .timeline-item {
+            background: #f8f9fa;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #0984e3;
+        }
+        
+        .timeline-item .date {
+            font-weight: bold;
+            color: #0984e3;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .timeline-item .time {
+            color: #636e72;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .flight-route {
+            background: #e3f2fd;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin: 0.3rem 0;
+            font-size: 0.95rem;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin: 1rem 0;
+        }
+        
+        .tip {
+            background: #d1f2eb;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #00b894;
+            margin: 1rem 0;
+        }
+        
+        .warning {
+            background: #ffe5e5;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+            margin: 1rem 0;
+        }
+        
+        .checklist {
+            list-style: none;
+        }
+        
+        .checklist li {
+            padding: 0.5rem 0;
+            padding-left: 1.8rem;
+            position: relative;
+        }
+        
+        .checklist li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #00b894;
+            font-weight: bold;
+        }
+        
+        .vocab-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .vocab-table td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .vocab-table td:first-child {
+            font-weight: bold;
+            color: #0984e3;
+            width: 40%;
+        }
+        
+        .transport-card {
+            background: white;
+            border: 2px solid #0984e3;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .transport-card .route {
+            font-weight: bold;
+            color: #0984e3;
+            margin-bottom: 0.5rem;
+        }
+        
+        .accommodation {
+            background: #e8f5e9;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .price {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .legend {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 0.5rem 0;
+        }
+
+        .legend-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .tab-content {
+                padding: 1.5rem 1rem;
+            }
+            
+            .tab {
+                padding: 0.8rem;
+                font-size: 0.85rem;
+                min-width: 100px;
+            }
+
+            #map {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌴 Philippines 2025</h1>
+            <p>21 Novembre - 5 Décembre</p>
+            <p>Hong Kong • Manila • Palawan • Coron • El Nido</p>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="openTab(event, 'carte')">🗺️ Carte</button>
+            <button class="tab" onclick="openTab(event, 'planning')">📅 Planning</button>
+            <button class="tab" onclick="openTab(event, 'tao')">⛵ TAO</button>
+            <button class="tab" onclick="openTab(event, 'itineraire')">🏝️ Itinéraire</button>
+            <button class="tab" onclick="openTab(event, 'bagage')">🎒 Bagage</button>
+            <button class="tab" onclick="openTab(event, 'culture')">🙏 Culture</button>
+            <button class="tab" onclick="openTab(event, 'lexique')">🗣️ Lexique</button>
+        </div>
+        
+        <div id="carte" class="tab-content active">
+            <h2>🗺️ Carte Interactive de Votre Voyage</h2>
+            
+            <div class="legend">
+                <strong>Légende:</strong>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #e74c3c;"></div>
+                    <span>✈️ Vols internationaux</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #3498db;"></div>
+                    <span>✈️ Vols domestiques</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #00b894;"></div>
+                    <span>⛵ Expédition TAO (bateau) + camps</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #f39c12;"></div>
+                    <span>🏝️ Destinations principales</span>
+                </div>
+            </div>
+
+            <div id="map"></div>
+
+            <div class="tip">
+                <strong>💡 Cliquez sur les marqueurs</strong> pour voir les détails de chaque étape !
+            </div>
+        </div>
+        
+        <div id="planning" class="tab-content">
+            <h2>📅 Planning Général</h2>
+            
+            <div class="timeline-item">
+                <div class="date">Jeudi 21 Novembre</div>
+                <div class="time">07:45</div>
+                <p>✈️ <strong>Départ Hong Kong (HKG)</strong></p>
+                <div class="flight-route">→ Vol vers Manila Clark (CRK)</div>
+                <div class="time">~11:00 (arrivée estimée)</div>
+                <p>Escale à Clark International Airport</p>
+                
+                <div class="time">~12:00-13:00</div>
+                <div class="flight-route">→ Vol domestique Clark (CRK) → Busuanga (USU)</div>
+                <div class="time">~14:00</div>
+                <p>📍 <strong>Arrivée à Busuanga (Île de Coron)</strong></p>
+                
+                <div class="warning" style="margin-top: 1rem;">
+                    <strong>⚠️ Important:</strong> Vérifiez le temps de connexion entre les vols à Clark. Prévoyez minimum 2h pour récupérer les bagages et faire le check-in du vol domestique.
+                </div>
+                
+                <div class="time">14:00 - 19:15</div>
+                <p>🚐 Transfert Busuanga → Coron Town (30-45 min)</p>
+                <p>Installation à l'hôtel / temps libre</p>
+                
+                <div class="time">19:15</div>
+                <p>📋 <strong>Briefing TAO Philippines</strong> (lieu à confirmer avec TAO)</p>
+                <p><em>Présentation de l'expédition, équipage, itinéraire</em></p>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="date">Vendredi 22 - Mercredi 27 Novembre</div>
+                <p>⛵ <strong>Expédition TAO Philippines</strong> (6 jours / 5 nuits)</p>
+                <p>🗺️ Coron → El Nido en bateau traditionnel</p>
+                <p><em>Îles paradisiaques, snorkeling, lagons secrets, plages désertes, vie locale sur les îles, nuits sous les étoiles</em></p>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="date">Mercredi 27 Novembre (soir) - Mercredi 4 Décembre</div>
+                <p>🗺️ <strong>Exploration libre Palawan</strong></p>
+                <p>📍 El Nido (2 nuits) → Sabang (1 nuit) → Puerto Princesa (2 nuits) → Manila (1 nuit)</p>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="date">Mercredi 4 Décembre</div>
+                <p>✈️ Vol Puerto Princesa → Manila (après-midi)</p>
+                <p>🏨 Nuit à Manila près de l'aéroport</p>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="date">Jeudi 5 Décembre</div>
+                <p>✈️ <strong>Retour</strong> Manila (MNL) → Zurich (ZRH)</p>
+                <p>Via Bangkok (escale)</p>
+            </div>
+        </div>
+        
+        <div id="tao" class="tab-content">
+            <h2>⛵ Expédition TAO Philippines - 6 Jours</h2>
+            
+            <div class="highlight">
+                <strong>🌴 TAO Philippines - Coron to El Nido</strong><br>
+                22-27 Novembre 2025 (6 jours / 5 nuits)<br>
+                Navigation en bateau traditionnel à travers les îles paradisiaques de Palawan
+            </div>
+
+            <h3>🗺️ Carte de l'Expédition TAO</h3>
+            <div id="taoMap" style="height: 500px; width: 100%; border-radius: 8px; margin: 1.5rem 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></div>
+
+            <div class="tip">
+                <strong>💡 Cliquez sur les marqueurs</strong> pour voir les détails de chaque jour/camp de l'expédition !
+            </div>
+
+            <h3>📋 Informations Générales</h3>
+            
+            <div class="tip">
+                <strong>💡 Concept TAO:</strong><br>
+                TAO (signifie "personne" en tagalog) est une expédition eco-responsable qui vous fait découvrir les Philippines authentiques. Vous voyagerez sur un bateau traditionnel philippin, dormirez dans des camps rustiques sur des îles isolées, et partagerez la vie des communautés locales. C'est une aventure déconnectée, sans électricité ni wifi - juste vous, la mer, et la nature.
+            </div>
+
+            <div class="accommodation">
+                <strong>✅ Inclus dans le prix:</strong>
+                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                    <li>Tous les repas (3 par jour + snacks)</li>
+                    <li>Hébergement en bungalow rustique ou tente</li>
+                    <li>Équipement de snorkeling</li>
+                    <li>Kayaks et paddle boards</li>
+                    <li>Guides expérimentés et équipage local</li>
+                    <li>Tous les transferts en bateau</li>
+                    <li>Visites des communautés locales</li>
+                    <li>Activités (snorkeling, randonnées, plages)</li>
+                </ul>
+            </div>
+
+            <div class="warning">
+                <strong>❌ Non inclus:</strong><br>
+                • Transfert Busuanga Airport → Coron Town (à réserver séparément)<br>
+                • Boissons alcoolisées (disponibles à l'achat)<br>
+                • Pourboires pour l'équipage (suggéré: 500-1000 PHP/personne)<br>
+                • Équipement personnel (appareil photo, lampe frontale, etc.)
+            </div>
+
+            <h3>📅 Programme Jour par Jour</h3>
+
+            <div class="timeline-item">
+                <div class="date">Jour 1 - Vendredi 22 Novembre</div>
+                <div class="time">Matin (08:00-09:00)</div>
+                <p>🚢 <strong>Départ de Coron Town</strong></p>
+                <p>Embarquement sur le bateau traditionnel, rencontre avec l'équipage et les autres voyageurs (groupe de 20-30 personnes)</p>
+                
+                <div class="time">Journée</div>
+                <p>• Navigation vers le premier camp</p>
+                <p>• Snorkeling dans les récifs coralliens</p>
+                <p>• Déjeuner à bord du bateau</p>
+                <p>• Arrivée au premier camp sur une île isolée</p>
+                <p>• Installation dans les bungalows/tentes</p>
+                
+                <div class="time">Soir</div>
+                <p>• Coucher de soleil sur la plage</p>
+                <p>• Dîner communautaire (poisson frais grillé, riz, légumes)</p>
+                <p>• Soirée autour du feu, musique, étoiles</p>
+                <p>• Nuit en bungalow rustique ou tente sur la plage</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="date">Jour 2 - Samedi 23 Novembre</div>
+                <div class="time">Journée type en navigation</div>
+                <p>🏝️ <strong>Exploration des îles</strong></p>
+                <p>• Réveil naturel avec le soleil (~06:00)</p>
+                <p>• Petit-déjeuner (fruits tropicaux, pancakes, café)</p>
+                <p>• Session snorkeling matinale (récifs, poissons colorés, parfois tortues)</p>
+                <p>• Navigation vers une nouvelle île</p>
+                <p>• Déjeuner à bord ou sur une plage</p>
+                <p>• Temps libre: kayak, paddle, baignade, exploration de l'île</p>
+                <p>• Visite possible d'un village de pêcheurs</p>
+                <p>• Installation au camp suivant</p>
+                <p>• Dîner et soirée conviviale</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="date">Jour 3 - Dimanche 24 Novembre</div>
+                <p>🌊 <strong>Lagons secrets & plages désertes</strong></p>
+                <p>• Exploration de lagons cachés accessibles uniquement en kayak</p>
+                <p>• Snorkeling dans des spots exceptionnels</p>
+                <p>• Visite de plages de sable blanc totalement isolées</p>
+                <p>• Possibilité de randonnée sur certaines îles (points de vue)</p>
+                <p>• Pêche avec les locaux (selon itinéraire)</p>
+                <p>• Beach volleyball ou jeux de groupe en fin d'après-midi</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="date">Jour 4 - Lundi 25 Novembre</div>
+                <p>🏘️ <strong>Immersion communautaire</strong></p>
+                <p>• Visite d'une communauté insulaire isolée</p>
+                <p>• Rencontre avec les familles locales</p>
+                <p>• Découverte de leur mode de vie (pêche, agriculture)</p>
+                <p>• Participation possible aux activités quotidiennes</p>
+                <p>• Échanges culturels avec les habitants</p>
+                <p>• Contribution de TAO au développement local (écoles, infrastructures)</p>
+                <p>• Soirée spéciale avec danses et musique traditionnelle</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="date">Jour 5 - Mardi 26 Novembre</div>
+                <p>🐠 <strong>Dernière journée complète</strong></p>
+                <p>• Session snorkeling dans les meilleurs spots</p>
+                <p>• Derniers moments de détente sur les plages paradisiaques</p>
+                <p>• Activités nautiques: kayak entre les îlots rocheux</p>
+                <p>• Navigation progressive vers la zone d'El Nido</p>
+                <p>• Dernier camp sur une île proche d'El Nido</p>
+                <p>• Dîner d'adieu avec l'équipage</p>
+                <p>• Soirée festive, partage des photos et souvenirs</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="date">Jour 6 - Mercredi 27 Novembre</div>
+                <div class="time">Matin</div>
+                <p>🏁 <strong>Arrivée à El Nido</strong></p>
+                <p>• Petit-déjeuner au camp</p>
+                <p>• Dernière baignade</p>
+                <p>• Nettoyage du camp (TAO = zéro déchet)</p>
+                
+                <div class="time">~14:00-15:00</div>
+                <p>• Arrivée à El Nido Town</p>
+                <p>• Débarquement et adieux à l'équipage</p>
+                <p>• Transfert vers votre hébergement</p>
+                <p><em>Fin de l'expédition TAO</em></p>
+            </div>
+
+            <h3>🎒 Que Prendre pour TAO</h3>
+
+            <div class="tip">
+                <strong>Essentiel pour TAO:</strong>
+                <ul class="checklist">
+                    <li>Sac souple/sac à dos (PAS de valise rigide)</li>
+                    <li>Maillots de bain (2-3)</li>
+                    <li>T-shirts/débardeurs (4-5)</li>
+                    <li>Short (2-3)</li>
+                    <li>Sweat/polaire léger (soirées)</li>
+                    <li>Tongs robustes + chaussures aquatiques</li>
+                    <li>Serviette microfibre</li>
+                    <li>Sac étanche pour protéger vos affaires</li>
+                    <li>Lampe frontale (camps sans électricité)</li>
+                    <li>Crème solaire reef-safe</li>
+                    <li>Répulsif anti-moustiques</li>
+                    <li>Lunettes de soleil avec cordon</li>
+                    <li>Casquette/chapeau</li>
+                    <li>Appareil photo waterproof (GoPro recommandée)</li>
+                    <li>Batterie externe (pas de recharge possible)</li>
+                    <li>Médicaments personnels</li>
+                    <li>Petite trousse de premiers soins</li>
+                </ul>
+            </div>
+
+            <div class="warning">
+                <strong>⚠️ Important à savoir:</strong><br>
+                • Pas d'électricité dans les camps (chargez tout avant)<br>
+                • Pas de wifi/réseau téléphonique (déconnexion totale)<br>
+                • Toilettes et douches rustiques (eau de mer/eau douce limitée)<br>
+                • Hébergement simple: matelas, moustiquaire, ventilation naturelle<br>
+                • Prévoyez des sacs plastiques pour protéger électronique et vêtements<br>
+                • Voyage participatif: vous aidez aux tâches quotidiennes (optionnel mais apprécié)
+            </div>
+
+            <h3>🌟 À Quoi S'attendre</h3>
+
+            <div class="highlight">
+                <strong>🎯 Points forts de TAO:</strong><br>
+                ✓ Expérience authentique loin du tourisme de masse<br>
+                ✓ Îles paradisiaques accessibles uniquement en bateau<br>
+                ✓ Snorkeling exceptionnel (récifs coralliens préservés)<br>
+                ✓ Rencontres avec les communautés locales<br>
+                ✓ Groupe international convivial (20-30 voyageurs)<br>
+                ✓ Équipage local passionné et expérimenté<br>
+                ✓ Nourriture délicieuse (fruits de mer frais, cuisine locale)<br>
+                ✓ Déconnexion totale et retour à l'essentiel<br>
+                ✓ Impact positif sur les communautés visitées
+            </div>
+
+            <div class="tip">
+                <strong>💚 Philosophie TAO:</strong><br>
+                TAO Philippines est engagé dans le tourisme responsable. L'organisation soutient les communautés locales (construction d'écoles, centres médicaux), emploie des équipages locaux, pratique le zéro déchet, et limite son impact environnemental. Vous participerez à cette démarche en respectant les consignes écologiques et en vous immergeant respectueusement dans les cultures locales.
+            </div>
+
+            <h3>🤝 Conseils pour Profiter au Maximum</h3>
+
+            <ul class="checklist">
+                <li>Adoptez l'esprit TAO: simplicité, partage, respect</li>
+                <li>Soyez ouvert aux rencontres (groupe international)</li>
+                <li>Participez aux activités communautaires</li>
+                <li>Profitez de la déconnexion numérique</li>
+                <li>Respectez l'environnement (zéro déchet, coraux)</li>
+                <li>Apprenez quelques mots de tagalog pour échanger avec les locaux</li>
+                <li>Immortalisez les moments mais vivez l'instant présent</li>
+                <li>Soyez flexible: l'itinéraire peut changer selon météo/marées</li>
+                <li>Apportez de bonnes vibrations et votre sourire!</li>
+            </ul>
+
+            <div class="tip">
+                <strong>📸 Photos & Souvenirs:</strong><br>
+                L'équipage prend souvent des photos de groupe et des moments forts. Ils les partagent généralement après le voyage. N'oubliez pas votre appareil waterproof pour capturer les snorkeling et moments aquatiques!
+            </div>
+        </div>
+        
+        <div id="itineraire" class="tab-content">
+            <h2>🗺️ Itinéraire Détaillé (27 Nov - 4 Déc)</h2>
+            
+            <h3>📍 El Nido - 27-29 Novembre (2 nuits)</h3>
+            <div class="accommodation">
+                <strong>🏡 Hébergement recommandé:</strong> Spin Designer Hostel ou Tribal Adventures Guesthouse<br>
+                <span class="price">800-1200 PHP/nuit</span> (chambre privée, quartier Corong-Corong, loin de la foule)
+            </div>
+            
+            <div class="tip">
+                <strong>💡 À faire:</strong>
+                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                    <li>Location de scooter pour explorer Nacpan Beach et Duli Beach (plages authentiques, peu touristiques)</li>
+                    <li>Coucher de soleil à Las Cabanas Beach</li>
+                    <li>Dîner au Trattoria Altrove (italien tenu par des locaux) ou Art Cafe</li>
+                    <li>Marché local de El Nido Town le matin (fruits tropicaux, poisson frais)</li>
+                    <li>Balade en kayak dans les lagons (moins touristique en fin d'après-midi)</li>
+                </ul>
+            </div>
+            
+            <div class="transport-card">
+                <div class="route">🚐 El Nido → Sabang (Puerto Princesa)</div>
+                <p>Départ: 29 novembre, matin (06:00)</p>
+                <p>Van partagé: 600-800 PHP/personne (5-6h)</p>
+                <p>Réservation: Eulen Joy Transport ou via votre hostel</p>
+            </div>
+            
+            <h3>📍 Sabang (Underground River) - 29-30 Novembre (1 nuit)</h3>
+            <div class="accommodation">
+                <strong>🏡 Hébergement:</strong> Sheridan Beach Resort ou homestay locale<br>
+                <span class="price">1500-2000 PHP/nuit</span> (vue sur la baie de Sabang)
+            </div>
+            
+            <div class="highlight">
+                <strong>⭐ INCONTOURNABLE:</strong> Rivière souterraine de Puerto Princesa (UNESCO)<br>
+                Réservation obligatoire via <em>puerto-undergroundriver.com</em><br>
+                Tour tôt le matin (07:00) pour éviter la foule - 1500 PHP
+            </div>
+            
+            <div class="tip">
+                <strong>💡 Expérience locale:</strong>
+                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                    <li>Dîner de fruits de mer chez les pêcheurs (demandez "sari-sari store")</li>
+                    <li>Balade en fin de journée sur la plage de Sabang (mangrove au coucher du soleil)</li>
+                    <li>Visite du village de pêcheurs (très authentique)</li>
+                </ul>
+            </div>
+            
+            <div class="transport-card">
+                <div class="route">🚐 Sabang → Puerto Princesa</div>
+                <p>30 novembre après-midi</p>
+                <p>Van: 250 PHP/personne (2h)</p>
+            </div>
+            
+            <h3>📍 Puerto Princesa - 30 Nov - 2 Déc (2 nuits)</h3>
+            <div class="accommodation">
+                <strong>🏡 Hébergement:</strong> Canvas Boutique Hotel ou Hibiscus Garden Inn<br>
+                <span class="price">1200-1800 PHP/nuit</span> (centre-ville, quartier calme)
+            </div>
+            
+            <div class="tip">
+                <strong>💡 Expériences authentiques:</strong>
+                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                    <li><strong>1er décembre:</strong> Découverte du Baywalk en fin d'après-midi (vie locale, vendeurs de rue)</li>
+                    <li>Marché public San Jose (poisson, légumes, fruits exotiques)</li>
+                    <li>Restaurant local: <em>Kalui Restaurant</em> (pieds nus, cuisine palawanaise)</li>
+                    <li><strong>Firefly Watching</strong> à Iwahig River (tour nocturne magique - 800 PHP)</li>
+                    <li>Visite de la ferme de crocodiles (conservation)</li>
+                    <li>Baker's Hill (parc avec vue panoramique, moins touristique en semaine)</li>
+                </ul>
+            </div>
+            
+            <div class="highlight">
+                <strong>🎉 Événement spécial:</strong> Début décembre = préparation des <em>Parol</em> (lanternes de Noël philippines)<br>
+                Visitez les quartiers résidentiels le soir pour voir les décorations traditionnelles!
+            </div>
+            
+            <div class="transport-card">
+                <div class="route">✈️ Puerto Princesa → Manila</div>
+                <p>Mardi 3 décembre (vol domestique)</p>
+                <p>Cebu Pacific ou AirAsia: 1500-2500 PHP (1h15)</p>
+                <p>Vol recommandé: départ 14:00-16:00</p>
+            </div>
+            
+            <h3>📍 Manila - 3-4 Décembre (1 nuit)</h3>
+            <div class="accommodation">
+                <strong>🏡 Hébergement:</strong> Z Hostel Makati ou The Bayleaf Intramuros<br>
+                <span class="price">1000-2000 PHP/nuit</span> (proche de l'aéroport ou Intramuros)
+            </div>
+            
+            <div class="tip">
+                <strong>💡 Dernière journée:</strong>
+                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                    <li><strong>Intramuros:</strong> vieille ville fortifiée (Fort Santiago, église San Agustin)</li>
+                    <li>Quartier de Poblacion (street art, cafés alternatifs)</li>
+                    <li>Dîner au <em>Barbara's Heritage Restaurant</em> (spectacle culturel + buffet filipino)</li>
+                    <li>Balade à Binondo (Chinatown, très authentique)</li>
+                    <li>Évitez Rizal Park en soirée (trop touristique)</li>
+                </ul>
+            </div>
+            
+            <div class="warning">
+                <strong>⚠️ Transport aéroport:</strong><br>
+                Prévoyez 3h avant le vol. Traffic intense à Manila!<br>
+                GrabCar recommandé: 300-500 PHP selon localisation
+            </div>
+        </div>
+        
+        <div id="bagage" class="tab-content">
+            <h2>🎒 Liste de Bagage</h2>
+            
+            <h3>👕 Vêtements</h3>
+            <ul class="checklist">
+                <li>Maillots de bain (2-3)</li>
+                <li>T-shirts légers (5-6)</li>
+                <li>Short/pantacourt (3-4)</li>
+                <li>Pantalon léger long (1, pour les églises)</li>
+                <li>Robe/chemise légère (1, pour le dîner)</li>
+                <li>Sweat léger (climatisation des bus)</li>
+                <li>Sous-vêtements à séchage rapide</li>
+                <li>Tongs ET chaussures de marche</li>
+                <li>Chaussures aquatiques (rochers/corail)</li>
+            </ul>
+            
+            <h3>🌊 Plage & Snorkeling</h3>
+            <ul class="checklist">
+                <li>Masque et tuba personnel (optionnel, TAO fournit)</li>
+                <li>Crème solaire REEF SAFE (biodégradable)</li>
+                <li>After-sun/aloe vera</li>
+                <li>Rashguard anti-UV</li>
+                <li>Sac étanche (10-20L)</li>
+                <li>Serviette microfibre à séchage rapide</li>
+            </ul>
+            
+            <h3>💊 Santé & Hygiène</h3>
+            <ul class="checklist">
+                <li>Répulsif anti-moustiques (DEET 30%)</li>
+                <li>Antihistaminique</li>
+                <li>Anti-diarrhéique</li>
+                <li>Désinfectant mains</li>
+                <li>Pansements & antiseptique</li>
+                <li>Médicaments personnels</li>
+                <li>Préservatifs (difficiles à trouver)</li>
+                <li>Protection solaire lèvres</li>
+            </ul>
+            
+            <h3>📱 Tech & Documents</h3>
+            <ul class="checklist">
+                <li>Passeport (validité 6 mois)</li>
+                <li>Copies des réservations (vol + TAO)</li>
+                <li>Carte bancaire + espèces USD</li>
+                <li>Téléphone + chargeur</li>
+                <li>Batterie externe (20000 mAh)</li>
+                <li>Adaptateur universel (Type A/B pour Philippines)</li>
+                <li>Appareil photo waterproof/GoPro</li>
+                <li>Sac banane anti-vol</li>
+                <li>Carte SIM locale ou eSIM (Smart ou Globe)</li>
+            </ul>
+            
+            <h3>🎯 Divers</h3>
+            <ul class="checklist">
+                <li>Lampe frontale/torche</li>
+                <li>Lunettes de soleil + cordon</li>
+                <li>Casquette/chapeau</li>
+                <li>Sac à dos de jour (20-30L)</li>
+                <li>Bouteille réutilisable (filtre optionnel)</li>
+                <li>Livre/Kindle pour les trajets</li>
+                <li>Sacs plastique refermables (protéger électronique)</li>
+            </ul>
+            
+            <div class="warning">
+                <strong>⚠️ NE PAS prendre:</strong><br>
+                Objets de valeur, bijoux précieux, trop de bagages (vous changerez souvent de logement). Pour TAO: bagages souples uniquement (pas de valise rigide).
+            </div>
+        </div>
+        
+        <div id="culture" class="tab-content">
+            <h2>🙏 Culture & Bonnes Manières</h2>
+            
+            <h3>✅ À FAIRE</h3>
+            <ul class="checklist">
+                <li><strong>Sourire toujours:</strong> Les Philippins sont très chaleureux, souriez en retour</li>
+                <li><strong>Pointer avec les lèvres:</strong> Geste courant pour indiquer une direction</li>
+                <li><strong>Dire "po" et "opo":</strong> Marques de respect (oui = "opo")</li>
+                <li><strong>Enlever les chaussures:</strong> Avant d'entrer dans une maison</li>
+                <li><strong>Manger avec les mains:</strong> Accepté pour certains plats (kamayan style)</li>
+                <li><strong>Partager la nourriture:</strong> Offrir de partager votre plat</li>
+                <li><strong>Marchander gentiment:</strong> Aux marchés, avec le sourire</li>
+                <li><strong>Pourboire:</strong> 10% au restaurant si non inclus</li>
+            </ul>
+            
+            <h3>❌ À ÉVITER</h3>
+            <ul class="checklist">
+                <li><strong>Ne pas pointer du doigt:</strong> Utiliser toute la main</li>
+                <li><strong>Éviter la confrontation directe:</strong> Les Philippins valorisent l'harmonie</li>
+                <li><strong>Ne pas critiquer publiquement:</strong> Faire perdre la face est grave</li>
+                <li><strong>Pas de démonstrations affectives excessives:</strong> Société conservatrice</li>
+                <li><strong>Ne pas hausser la voix:</strong> Signe d'agressivité</li>
+                <li><strong>Respecter les églises:</strong> Épaules et genoux couverts</li>
+                <li><strong>Ne pas refuser l'hospitalité:</strong> Accepter au moins un peu</li>
+            </ul>
+            
+            <h3>🍽️ Culture Alimentaire</h3>
+            <div class="tip">
+                <strong>Spécialités à essayer:</strong>
+                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                    <li><strong>Adobo:</strong> Plat national (poulet/porc mariné)</li>
+                    <li><strong>Sinigang:</strong> Soupe aigre-douce</li>
+                    <li><strong>Lechon:</strong> Cochon rôti (fêtes)</li>
+                    <li><strong>Halo-halo:</strong> Dessert glacé coloré</li>
+                    <li><strong>Kinilaw:</strong> Ceviche philippin (poisson cru)</li>
+                    <li><strong>Balut:</strong> Œuf de canard fécondé (pour les aventureux!)</li>
+                    <li><strong>San Miguel Beer:</strong> Bière locale</li>
+                    <li><strong>Lumpia:</strong> Rouleaux de printemps philippins</li>
+                </ul>
+            </div>
+            
+            <h3>💰 Argent & Pourboires</h3>
+            <div class="highlight">
+                <strong>Monnaie:</strong> Peso philippin (PHP)<br>
+                <strong>Taux approximatif:</strong> 1 CHF ≈ 60-63 PHP<br>
+                <strong>Retrait:</strong> Distributeurs partout, frais 200-250 PHP/retrait<br>
+                <strong>Paiement:</strong> Beaucoup de cash nécessaire (petits commerces)
+            </div>
+
+            <h3>📞 Contacts Utiles</h3>
+            <div class="warning">
+                <strong>Urgences:</strong><br>
+                Police: 117<br>
+                Ambulance: 112<br>
+                Ambassade Suisse à Manille: +63 2 757 9000
+            </div>
+            
+            <div class="tip">
+                <strong>Applications utiles:</strong><br>
+                • <strong>Grab:</strong> Transport (comme Uber)<br>
+                • <strong>Google Maps:</strong> Navigation (fonctionne offline)<br>
+                • <strong>GCash:</strong> Paiement mobile (optionnel)<br>
+                • <strong>12Go Asia:</strong> Réservation transports
+            </div>
+        </div>
+        
+        <div id="lexique" class="tab-content">
+            <h2>🗣️ Lexique Tagalog</h2>
+            
+            <h3>Salutations & Politesse</h3>
+            <table class="vocab-table">
+                <tr><td>Bonjour</td><td>Magandang umaga / Kumusta</td></tr>
+                <tr><td>Au revoir</td><td>Paalam</td></tr>
+                <tr><td>Merci</td><td>Salamat</td></tr>
+                <tr><td>Merci beaucoup</td><td>Salamat po</td></tr>
+                <tr><td>S'il vous plaît</td><td>Paki- (+ verbe)</td></tr>
+                <tr><td>Oui</td><td>Oo / Opo (poli)</td></tr>
+                <tr><td>Non</td><td>Hindi</td></tr>
+                <tr><td>Excusez-moi</td><td>Excuse me / Pasensya na</td></tr>
+                <tr><td>Désolé</td><td>Pasensya / Sorry</td></tr>
+            </table>
+            
+            <h3>Pratique</h3>
+            <table class="vocab-table">
+                <tr><td>Combien?</td><td>Magkano?</td></tr>
+                <tr><td>Trop cher</td><td>Mahal</td></tr>
+                <tr><td>Où est...?</td><td>Nasaan ang...?</td></tr>
+                <tr><td>Toilettes</td><td>CR (comfort room)</td></tr>
+                <tr><td>Eau</td><td>Tubig</td></tr>
+                <tr><td>Nourriture</td><td>Pagkain</td></tr>
+                <tr><td>Délicieux</td><td>Masarap</td></tr>
+                <tr><td>L'addition</td><td>Bill / Bayad</td></tr>
+                <tr><td>Je ne comprends pas</td><td>Hindi ko maintindihan</td></tr>
+                <tr><td>Parlez-vous anglais?</td><td>Nagsasalita ka ba ng English?</td></tr>
+            </table>
+            
+            <h3>Nombres</h3>
+            <table class="vocab-table">
+                <tr><td>1</td><td>Isa</td></tr>
+                <tr><td>2</td><td>Dalawa</td></tr>
+                <tr><td>3</td><td>Tatlo</td></tr>
+                <tr><td>5</td><td>Lima</td></tr>
+                <tr><td>10</td><td>Sampu</td></tr>
+                <tr><td>20</td><td>Dalawampu</td></tr>
+                <tr><td>100</td><td>Isang daan</td></tr>
+            </table>
+            
+            <h3>Urgences</h3>
+            <table class="vocab-table">
+                <tr><td>Aide!</td><td>Tulong!</td></tr>
+                <tr><td>Police</td><td>Pulis</td></tr>
+                <tr><td>Hôpital</td><td>Ospital</td></tr>
+                <tr><td>Je suis malade</td><td>May sakit ako</td></tr>
+            </table>
+            
+            <div class="tip">
+                <strong>💡 Bon à savoir:</strong><br>
+                La plupart des Philippins parlent anglais (2e langue officielle). N'hésitez pas à l'utiliser!<br>
+                Le tagalog mélange beaucoup d'anglais dans la conversation ("Taglish").
+            </div>
+        </div>
+        
+        <footer style="background: #2c3e50; color: white; padding: 2rem; text-align: center;">
+            <p style="margin-bottom: 0.5rem;">🌴 Bon voyage aux Philippines! 🌴</p>
+            <p style="font-size: 0.9rem; opacity: 0.8;">Mabuhay! (Longue vie!)</p>
+        </footer>
+    </div>
+
+    <script>
+        // Variable pour savoir si la carte TAO a été initialisée
+        let taoMapInitialized = false;
+        let taoMapInstance = null;
+
+        // Système d'onglets
+        function openTab(evt, tabName) {
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            const tabs = document.getElementsByClassName('tab');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+
+            // Initialiser la carte TAO lors du premier clic sur l'onglet
+            if (tabName === 'tao' && !taoMapInitialized) {
+                setTimeout(initTaoMap, 100);
+            }
+            
+            // Redimensionner la carte TAO si elle existe déjà
+            if (tabName === 'tao' && taoMapInitialized && taoMapInstance) {
+                setTimeout(() => taoMapInstance.invalidateSize(), 100);
+            }
+        }
+
+        // Initialisation de la carte
+        const map = L.map('map').setView([11.5, 120.0], 6);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Définition des lieux avec coordonnées
+        const locations = {
+            hongkong: [22.3193, 114.1694],
+            clark: [15.1859, 120.5601],
+            busuanga: [12.1217, 120.0985],
+            coron: [11.9937, 120.2071],
+            // Points intermédiaires TAO expedition
+            tao1: [11.7, 119.9],
+            tao2: [11.5, 119.7],
+            tao3: [11.35, 119.5],
+            elnido: [11.1919, 119.4000],
+            sabang: [10.2060, 118.9146],
+            puerto: [9.7392, 118.7353],
+            manila: [14.5995, 120.9842]
+        };
+
+        // Marqueurs avec icônes personnalisées
+        const redIcon = L.divIcon({className: 'custom-icon', html: '<div style="background:#e74c3c;width:20px;height:20px;border-radius:50%;border:3px solid white;"></div>'});
+        const blueIcon = L.divIcon({className: 'custom-icon', html: '<div style="background:#3498db;width:20px;height:20px;border-radius:50%;border:3px solid white;"></div>'});
+        const greenIcon = L.divIcon({className: 'custom-icon', html: '<div style="background:#00b894;width:20px;height:20px;border-radius:50%;border:3px solid white;"></div>'});
+        const orangeIcon = L.divIcon({className: 'custom-icon', html: '<div style="background:#f39c12;width:20px;height:20px;border-radius:50%;border:3px solid white;"></div>'});
+
+        // Marqueurs de villes
+        L.marker(locations.hongkong, {icon: redIcon}).addTo(map)
+            .bindPopup('<strong>Hong Kong</strong><br>Départ: 21 nov, 07:45');
+        
+        L.marker(locations.clark, {icon: blueIcon}).addTo(map)
+            .bindPopup('<strong>Clark (Manila)</strong><br>Escale - Vol domestique');
+        
+        L.marker(locations.busuanga, {icon: blueIcon}).addTo(map)
+            .bindPopup('<strong>Busuanga</strong><br>Arrivée: 21 nov, 14:00');
+        
+        L.marker(locations.coron, {icon: orangeIcon}).addTo(map)
+            .bindPopup('<strong>Coron</strong><br>21 nov soir: Briefing TAO<br>22 nov: 🚢 Départ expédition TAO');
+        
+        L.marker(locations.elnido, {icon: orangeIcon}).addTo(map)
+            .bindPopup('<strong>El Nido</strong><br>27 nov: 🏁 Arrivée TAO (~14h)<br>27-29 nov: Séjour (2 nuits)');
+        
+        L.marker(locations.sabang, {icon: orangeIcon}).addTo(map)
+            .bindPopup('<strong>Sabang</strong><br>29-30 nov (1 nuit)<br>Rivière souterraine UNESCO');
+        
+        L.marker(locations.puerto, {icon: orangeIcon}).addTo(map)
+            .bindPopup('<strong>Puerto Princesa</strong><br>30 nov-2 déc (2 nuits)<br>Fireflies, marchés, Parol');
+        
+        L.marker(locations.manila, {icon: redIcon}).addTo(map)
+            .bindPopup('<strong>Manila</strong><br>3-4 déc (1 nuit)<br>5 déc: Départ vers Zurich');
+
+        // Lignes de trajet
+        // Vol HK → Clark
+        L.polyline([locations.hongkong, locations.clark], {
+            color: '#e74c3c',
+            weight: 3,
+            opacity: 0.7,
+            dashArray: '10, 10'
+        }).addTo(map);
+
+        // Vol Clark → Busuanga
+        L.polyline([locations.clark, locations.busuanga], {
+            color: '#3498db',
+            weight: 3,
+            opacity: 0.7,
+            dashArray: '10, 10'
+        }).addTo(map);
+
+        // Route bateau Coron → El Nido (TAO) avec points d'arrêt
+        const taoRoute = [
+            locations.coron,
+            locations.tao1,
+            locations.tao2,
+            locations.tao3,
+            locations.elnido
+        ];
+        
+        L.polyline(taoRoute, {
+            color: '#00b894',
+            weight: 4,
+            opacity: 0.8
+        }).addTo(map);
+
+        // Marqueurs des îles/camps TAO (optionnels, petits)
+        const smallGreenIcon = L.divIcon({className: 'custom-icon', html: '<div style="background:#00b894;width:12px;height:12px;border-radius:50%;border:2px solid white;"></div>'});
+        
+        L.marker(locations.tao1, {icon: smallGreenIcon}).addTo(map)
+            .bindPopup('<strong>Camp TAO 1-2</strong><br>Îles du Nord');
+        L.marker(locations.tao2, {icon: smallGreenIcon}).addTo(map)
+            .bindPopup('<strong>Camp TAO 3-4</strong><br>Îles centrales');
+        L.marker(locations.tao3, {icon: smallGreenIcon}).addTo(map)
+            .bindPopup('<strong>Camp TAO 5</strong><br>Dernière île');
+
+        // Route terrestre El Nido → Sabang → Puerto
+        L.polyline([locations.elnido, locations.sabang, locations.puerto], {
+            color: '#f39c12',
+            weight: 3,
+            opacity: 0.7
+        }).addTo(map);
+
+        // Vol Puerto → Manila
+        L.polyline([locations.puerto, locations.manila], {
+            color: '#3498db',
+            weight: 3,
+            opacity: 0.7,
+            dashArray: '10, 10'
+        }).addTo(map);
+
+        // ===== FONCTION POUR INITIALISER LA CARTE TAO =====
+        function initTaoMap() {
+            if (taoMapInitialized) return;
+            
+            taoMapInstance = L.map('taoMap').setView([11.5, 119.7], 8);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(taoMapInstance);
+
+            // Icônes personnalisées pour TAO
+            const dayIcon = (day) => L.divIcon({
+                className: 'custom-icon', 
+                html: `<div style="background:#00b894;width:35px;height:35px;border-radius:50%;border:3px solid white;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:14px;box-shadow:0 2px 5px rgba(0,0,0,0.3);">${day}</div>`
+            });
+
+            const startIcon = L.divIcon({
+                className: 'custom-icon', 
+                html: '<div style="background:#e74c3c;width:30px;height:30px;border-radius:50%;border:3px solid white;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:18px;">🚢</div>'
+            });
+
+            const endIcon = L.divIcon({
+                className: 'custom-icon', 
+                html: '<div style="background:#f39c12;width:30px;height:30px;border-radius:50%;border:3px solid white;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:18px;">🏁</div>'
+            });
+
+            // Coordonnées détaillées des camps TAO
+            const taoCamps = {
+                start: [11.9937, 120.2071], // Coron
+                day1: [11.85, 120.10],       // Camp Jour 1
+                day2: [11.70, 119.95],       // Camp Jour 2
+                day3: [11.55, 119.75],       // Camp Jour 3
+                day4: [11.40, 119.60],       // Camp Jour 4 (village communautaire)
+                day5: [11.25, 119.45],       // Camp Jour 5
+                end: [11.1919, 119.4000]     // El Nido
+            };
+
+            // Marqueur de départ - Coron
+            L.marker(taoCamps.start, {icon: startIcon}).addTo(taoMapInstance)
+                .bindPopup(`
+                    <div style="min-width:200px;">
+                        <h4 style="color:#e74c3c;margin:0 0 10px 0;">🚢 Départ - Coron Town</h4>
+                        <strong>Vendredi 22 Nov - Matin</strong><br>
+                        ⏰ 08:00-09:00: Embarquement<br>
+                        👥 Rencontre équipage et voyageurs<br>
+                        🎒 Installation sur le bateau<br>
+                        ⛵ Navigation vers premier camp
+                    </div>
+                `);
+
+            // Jour 1 - Premier camp
+            L.marker(taoCamps.day1, {icon: dayIcon(1)}).addTo(taoMapInstance)
+                .bindPopup(`
+                    <div style="min-width:220px;">
+                        <h4 style="color:#00b894;margin:0 0 10px 0;">🏝️ Camp Jour 1</h4>
+                        <strong>Vendredi 22 Nov - Après-midi/Soir</strong><br>
+                        🏊 Snorkeling dans récifs coralliens<br>
+                        🏖️ Installation bungalows/tentes<br>
+                        🌅 Coucher de soleil sur la plage<br>
+                        🍽️ Dîner: Poisson grillé, riz, légumes<br>
+                        🔥 Soirée feu de camp, musique<br>
+                        ⭐ Nuit sous les étoiles
+                    </div>
+                `);
+
+            // Jour 2
+            L.marker(taoCamps.day2, {icon: dayIcon(2)}).addTo(taoMapInstance)
+                .bindPopup(`
+                    <div style="min-width:220px;">
+                        <h4 style="color:#00b894;margin:0 0 10px 0;">🏝️ Camp Jour 2</h4>
+                        <strong>Samedi 23 Nov</strong><br>
+                        🌅 Réveil naturel avec le soleil<br>
+                        🐠 Session snorkeling matinale<br>
+                        🥞 Petit-déj: Fruits, pancakes, café<br>
+                        ⛵ Navigation vers nouvelle île<br>
+                        🛶 Kayak et paddle libre<br>
+                        🎣 Possibilité de pêche locale<br>
+                        🌙 Soirée conviviale
+                    </div>
+                `);
+
+            // Jour 3
+            L.marker(taoCamps.day3, {icon: dayIcon(3)}).addTo(taoMapInstance)
+                .bindPopup(`
+                    <div style="min-width:220px;">
+                        <h4 style="color:#00b894;margin:0 0 10px 0;">🏝️ Camp Jour 3</h4>
+                        <strong>Dimanche 24 Nov</strong><br>
+                        🏞️ Exploration lagons secrets<br>
+                        🛶 Kayak entre les îlots<br>
+                        🏖️ Plages désertes de sable blanc<br>
+                        🥾 Randonnée point de vue (optionnel)<br>
+                        🏐 Beach volleyball<br>
+                        🌊 Spots de snorkeling exceptionnels<br>
+                        📸 Coucher de soleil magique
+                    </div>
+                `);
+
+            // Jour 4 - Village communautaire
+            L.marker(taoCamps.day4, {icon: dayIcon(4)}).addTo(taoMapInstance)
+                .bindPopup(`
+                    <div style="min-width:220px;">
+                        <h4 style="color:#00b894;margin:0 0 10px 0;">🏘️ Camp Jour 4 - Immersion</h4>
+                        <strong>Lundi 25 Nov</strong><br>
+                        👨‍👩‍👧 Visite communauté insulaire<br>
+                        🎣 Rencontre familles de pêcheurs<br>
+                        🌾 Découverte mode de vie local<br>
+                        🤝 Échanges culturels<br>
+                        🏫 Contribution TAO (écoles, infra)<br>
+                        💃 Soirée spéciale: danses traditionnelles<br>
+                        🎶 Musique locale
+                    </div>
+                `);
+
+            // Jour 5 - Dernier camp
+            L.marker(taoCamps.day5, {icon: dayIcon(5)}).addTo(taoMapInstance)
+                .bindPopup(`
+                    <div style="min-width:220px;">
+                        <h4 style="color:#00b894;margin:0 0 10px 0;">🏝️ Camp Jour 5 - Dernier camp</h4>
+                        <strong>Mardi 26 Nov</strong><br>
+                        🐠 Meilleurs spots de snorkeling<br>
+                        🏖️ Derniers moments plages paradis<br>
+                        🛶 Kayak entre îlots rocheux<br>
+                        ⛵ Navigation vers zone El Nido<br>
+                        🍽️ Dîner d'adieu avec équipage<br>
+                        🎉 Soirée festive finale<br>
+                        📸 Partage photos et souvenirs
+                    </div>
+                `);
+
+            // Arrivée - El Nido
+            L.marker(taoCamps.end, {icon: endIcon}).addTo(taoMapInstance)
+                .bindPopup(`
+                    <div style="min-width:200px;">
+                        <h4 style="color:#f39c12;margin:0 0 10px 0;">🏁 Arrivée - El Nido</h4>
+                        <strong>Mercredi 27 Nov</strong><br>
+                        🌅 Petit-déjeuner au camp<br>
+                        🏊 Dernière baignade<br>
+                        🧹 Nettoyage camp (zéro déchet)<br>
+                        ⏰ ~14:00-15:00: Débarquement<br>
+                        👋 Adieux à l'équipage<br>
+                        🏨 Transfert vers hébergement<br>
+                        <em>Fin de l'expédition TAO ⛵</em>
+                    </div>
+                `);
+
+            // Tracer la route complète TAO
+            const taoFullRoute = [
+                taoCamps.start,
+                taoCamps.day1,
+                taoCamps.day2,
+                taoCamps.day3,
+                taoCamps.day4,
+                taoCamps.day5,
+                taoCamps.end
+            ];
+
+            L.polyline(taoFullRoute, {
+                color: '#00b894',
+                weight: 4,
+                opacity: 0.7,
+                dashArray: '10, 5'
+            }).addTo(taoMapInstance);
+
+            // Ajouter des zones de snorkeling (cercles)
+            L.circle(taoCamps.day1, {
+                color: '#3498db',
+                fillColor: '#3498db',
+                fillOpacity: 0.2,
+                radius: 2000
+            }).addTo(taoMapInstance).bindPopup('🐠 Zone de snorkeling - Récifs coralliens');
+
+            L.circle(taoCamps.day3, {
+                color: '#3498db',
+                fillColor: '#3498db',
+                fillOpacity: 0.2,
+                radius: 2500
+            }).addTo(taoMapInstance).bindPopup('🐠 Zone de snorkeling - Lagons secrets');
+
+            L.circle(taoCamps.day5, {
+                color: '#3498db',
+                fillColor: '#3498db',
+                fillOpacity: 0.2,
+                radius: 2000
+            }).addTo(taoMapInstance).bindPopup('🐠 Meilleurs spots de snorkeling');
+
+            taoMapInitialized = true;
+        }
+    </script>
+</body>
+</html>
