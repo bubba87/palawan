@@ -53,6 +53,27 @@
             top: 0;
             z-index: 100;
             overflow-x: auto;
+            position: relative;
+        }
+
+        /* Indicateur de scroll pour mobile */
+        .tabs::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 30px;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.9));
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .tabs.has-scroll::after {
+                opacity: 1;
+            }
         }
         
         .tab {
@@ -246,23 +267,187 @@
             border-radius: 50%;
             margin-right: 0.5rem;
         }
-        
-        @media (max-width: 600px) {
-            header h1 {
-                font-size: 1.5rem;
+
+        /* Optimisations Mobile - iPhone & Android */
+        @media (max-width: 768px) {
+            body {
+                -webkit-text-size-adjust: 100%;
+                -webkit-font-smoothing: antialiased;
             }
-            
+
+            header h1 {
+                font-size: 1.6rem;
+                line-height: 1.3;
+            }
+
+            header p {
+                font-size: 0.95rem;
+            }
+
+            .tabs {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none; /* IE/Edge */
+            }
+
+            .tabs::-webkit-scrollbar {
+                display: none; /* Chrome/Safari */
+            }
+
+            .tab {
+                padding: 1rem 0.9rem;
+                font-size: 0.9rem;
+                min-width: 110px;
+                /* Touch-friendly tap target (min 44px height) */
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
             .tab-content {
                 padding: 1.5rem 1rem;
             }
-            
-            .tab {
-                padding: 0.8rem;
-                font-size: 0.85rem;
-                min-width: 100px;
+
+            h2 {
+                font-size: 1.3rem;
             }
 
-            #map {
+            h3 {
+                font-size: 1.1rem;
+            }
+
+            .timeline-item {
+                padding: 1rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .timeline-item .date {
+                font-size: 1rem;
+            }
+
+            #map, #taoMap {
+                height: 300px;
+                margin: 1rem 0;
+            }
+
+            /* Améliorer la lisibilité des tableaux sur mobile */
+            .vocab-table {
+                font-size: 0.9rem;
+            }
+
+            .vocab-table td {
+                padding: 0.6rem 0.4rem;
+                display: block;
+                border: none;
+            }
+
+            .vocab-table tr {
+                display: block;
+                margin-bottom: 1rem;
+                background: #f8f9fa;
+                padding: 0.5rem;
+                border-radius: 6px;
+            }
+
+            .vocab-table td:first-child {
+                font-weight: bold;
+                color: #0984e3;
+                border-bottom: 1px solid #e0e0e0;
+                padding-bottom: 0.3rem;
+                margin-bottom: 0.3rem;
+            }
+
+            .vocab-table td:last-child {
+                padding-top: 0;
+            }
+
+            /* Transport cards plus lisibles */
+            .transport-card, .accommodation, .highlight, .tip, .warning {
+                font-size: 0.95rem;
+                padding: 0.9rem;
+            }
+
+            /* Boutons et liens touch-friendly */
+            button, a {
+                min-height: 44px;
+                min-width: 44px;
+            }
+
+            /* Cartes Leaflet optimisées pour mobile */
+            .leaflet-container {
+                font-size: 0.9rem;
+            }
+
+            .leaflet-popup-content {
+                margin: 0.8rem 0.6rem;
+                font-size: 0.85rem;
+                line-height: 1.4;
+            }
+
+            .leaflet-popup-content h4 {
+                font-size: 0.95rem;
+                margin-bottom: 0.5rem;
+            }
+
+            /* Éviter le zoom sur les input (iOS) */
+            input, select, textarea {
+                font-size: 16px;
+            }
+
+            /* Améliorer l'espacement des listes */
+            ul, ol {
+                padding-left: 1.2rem;
+            }
+
+            .checklist li {
+                padding: 0.4rem 0;
+                padding-left: 1.5rem;
+                font-size: 0.95rem;
+            }
+
+            /* Footer mobile-friendly */
+            footer {
+                padding: 1.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            /* Améliorer la légende sur mobile */
+            .legend {
+                padding: 0.8rem;
+                font-size: 0.9rem;
+            }
+
+            .legend-item {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Très petits écrans (iPhone SE, etc.) */
+        @media (max-width: 375px) {
+            header h1 {
+                font-size: 1.4rem;
+            }
+
+            .tab {
+                padding: 0.8rem 0.6rem;
+                font-size: 0.85rem;
+                min-width: 95px;
+            }
+
+            #map, #taoMap {
+                height: 250px;
+            }
+
+            .timeline-item {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Landscape mode sur mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            #map, #taoMap {
                 height: 350px;
             }
         }
@@ -1101,6 +1286,34 @@
         let taoMapInitialized = false;
         let taoMapInstance = null;
 
+        // Détection du scroll des onglets sur mobile
+        function checkTabsScroll() {
+            const tabs = document.querySelector('.tabs');
+            if (tabs) {
+                const hasScroll = tabs.scrollWidth > tabs.clientWidth;
+                if (hasScroll) {
+                    tabs.classList.add('has-scroll');
+                } else {
+                    tabs.classList.remove('has-scroll');
+                }
+            }
+        }
+
+        // Gérer le redimensionnement de la fenêtre
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                checkTabsScroll();
+                // Redimensionner les cartes
+                if (map) map.invalidateSize();
+                if (taoMapInstance) taoMapInstance.invalidateSize();
+            }, 250);
+        });
+
+        // Vérifier au chargement
+        window.addEventListener('load', checkTabsScroll);
+
         // Système d'onglets
         function openTab(evt, tabName) {
             const tabContents = document.getElementsByClassName('tab-content');
@@ -1127,12 +1340,23 @@
             }
         }
 
-        // Initialisation de la carte
-        const map = L.map('map').setView([11.5, 120.0], 6);
-        
+        // Initialisation de la carte avec options mobile
+        const isMobile = window.innerWidth <= 768;
+        const map = L.map('map', {
+            tap: true, // Active le support tactile
+            tapTolerance: 15, // Tolérance pour les taps sur mobile
+            scrollWheelZoom: !isMobile, // Désactive zoom molette sur mobile
+            dragging: true,
+            touchZoom: true,
+            doubleClickZoom: true
+        }).setView([11.5, 120.0], isMobile ? 5.5 : 6);
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
+
+        // Ajuster la carte après chargement
+        setTimeout(() => map.invalidateSize(), 100);
 
         // Définition des lieux avec coordonnées
         const locations = {
@@ -1241,9 +1465,17 @@
         // ===== FONCTION POUR INITIALISER LA CARTE TAO =====
         function initTaoMap() {
             if (taoMapInitialized) return;
-            
-            taoMapInstance = L.map('taoMap').setView([11.5, 119.7], 8);
-            
+
+            const isMobile = window.innerWidth <= 768;
+            taoMapInstance = L.map('taoMap', {
+                tap: true,
+                tapTolerance: 15,
+                scrollWheelZoom: !isMobile,
+                dragging: true,
+                touchZoom: true,
+                doubleClickZoom: true
+            }).setView([11.5, 119.7], isMobile ? 7.5 : 8);
+
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
             }).addTo(taoMapInstance);
