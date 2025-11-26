@@ -1278,6 +1278,9 @@
         <footer style="background: #2c3e50; color: white; padding: 2rem; text-align: center;">
             <p style="margin-bottom: 0.5rem;">🌴 Bon voyage aux Philippines! 🌴</p>
             <p style="font-size: 0.9rem; opacity: 0.8;">Mabuhay! (Longue vie!)</p>
+            <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 1rem;">
+                Dernière mise à jour: <span id="lastModified">26 novembre 2025</span>
+            </p>
         </footer>
     </div>
 
@@ -1313,6 +1316,16 @@
 
         // Vérifier au chargement
         window.addEventListener('load', checkTabsScroll);
+
+        // Mettre à jour le timestamp de modification
+        window.addEventListener('load', function() {
+            const lastModifiedElement = document.getElementById('lastModified');
+            if (lastModifiedElement) {
+                const today = new Date();
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                lastModifiedElement.textContent = today.toLocaleDateString('fr-FR', options);
+            }
+        });
 
         // Système d'onglets
         function openTab(evt, tabName) {
